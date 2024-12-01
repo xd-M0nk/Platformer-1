@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
         
         if (isGrounded && Input.GetButtonDown("Jump") )
         {
-            var jumpForce = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+            var jumpForce = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * rb.gravityScale);
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
     }
