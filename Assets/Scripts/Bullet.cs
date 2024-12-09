@@ -29,7 +29,12 @@ public class Bullet : MonoBehaviour
 
         DamageIndicator.instance.ShowDamage((int)damage, transform.position);
 
-        print("Hit " + other.gameObject.name + " for " + damage + " damage");
+        //print("Hit " + other.gameObject.name + " for " + damage + " damage");
+        var health = other.gameObject.GetComponent<Health>();
+        if(health != null)
+        {
+            health.TakeDamage((int)damage);
+        }
 
         Destroy(gameObject);
     }

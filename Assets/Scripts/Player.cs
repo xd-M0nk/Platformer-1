@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
+    public Health health;
+
     [Header("Movement")] 
     public float speed = 10;
     public float jumpHeight = 4;
@@ -19,11 +21,18 @@ public class Player : MonoBehaviour
     public float radius = 0.2f;
     public LayerMask groundMask;
 
+
     [Header("Jump Mechanics")]
     public float coyoteTime = 0.2f;
     public float jumpBufferTime = 0.2f;
     public int maxJumps = 2;
-    
+
+    [Header("Sound")]
+    public AudioClip jumpSound;
+    public AudioClip dashSound;
+    public AudioSource walkSoundSource;
+
+    private AudioSource audioSource;
     private int remainingJumps;
     private float coyoteBuffer;
     private float jumpBuffer;
@@ -38,6 +47,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -69,6 +79,7 @@ public class Player : MonoBehaviour
 
         if (jumpBuffer > 0 && (coyoteBuffer > 0 || remainingJumps > 0))
         {
+            audioSource.PlayOneShot(jumpSound);
             jumpBuffer = 0;
 
             var jumpForce = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * rb.gravityScale);
@@ -83,6 +94,7 @@ public class Player : MonoBehaviour
         //dashing
         if(Input.GetButtonDown("Dash") && dashCooldownTime <= 0)
         {
+            audioSource.PlayOneShot(dashSound);
             isDashing = true;
             dashTime = dashDuration;
             dashCooldownTime = dashCooldown;        
@@ -101,6 +113,18 @@ public class Player : MonoBehaviour
             }
         }
         dashCooldownTime -= Time.deltaTime;
+
+        if(isGrounded && rb.velocity.magnitude > 0)
+        {
+            if(!walkSoundSource.isPlaying)
+            {
+                walkSoundSource.Play();
+            }
+        }
+        else
+        {
+            walkSoundSource.Stop();
+        }
     }
 
     void FixedUpdate()
@@ -127,7 +151,12 @@ public class Player : MonoBehaviour
         //apply fall damage
         if(collision.relativeVelocity.y > 25)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            health.TakeDamage(1);
         }
+    }
+
+    public void Die()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

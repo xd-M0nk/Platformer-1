@@ -6,12 +6,15 @@ public class Shooter : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public Transform shootPoint;
+    public AudioClip shootSound;
 
+    private AudioSource audioSource;
     private Camera cam;
 
     void Start()
     {
         cam = Camera.main;
+        audioSource = GetComponent<AudioSource>();
     }
 
 
@@ -19,6 +22,7 @@ public class Shooter : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
+            audioSource.PlayOneShot(shootSound);
             var mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
             var direction = (mousePos - transform.position).normalized;
