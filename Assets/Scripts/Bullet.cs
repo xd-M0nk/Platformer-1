@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public GameObject particles;
     public Vector2 direction;
     public float speed = 20;
     public Vector2 damageRange = new Vector2(10, 20);
@@ -22,6 +23,7 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) 
     {
+        Instantiate(particles, transform.position, Quaternion.identity);
         //if(other.gameObject.CompareTag("Player")) return;
         
         //TODO: get health component
