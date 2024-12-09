@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour
     public GameObject particles;
     public Vector2 direction;
     public float speed = 20;
+    public float lifeTime = 2;
     public Vector2 damageRange = new Vector2(10, 20);
     
     private Rigidbody2D rb;
@@ -14,6 +15,7 @@ public class Bullet : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        Invoke("SelfDestruct", lifeTime);
     }
 
     void FixedUpdate()
@@ -23,13 +25,12 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other) 
     {
-        Instantiate(particles, transform.position, Quaternion.identity);
         //if(other.gameObject.CompareTag("Player")) return;
         
         //TODO: get health component
         var damage = Random.Range(damageRange.x, damageRange.y);
 
-        DamageIndicator.instance.ShowDamage((int)damage, transform.position);
+        //DamageIndicator.instance.ShowDamage((int)damage, transform.position);
 
         //print("Hit " + other.gameObject.name + " for " + damage + " damage");
         var health = other.gameObject.GetComponent<Health>();
@@ -37,7 +38,13 @@ public class Bullet : MonoBehaviour
         {
             health.TakeDamage((int)damage);
         }
+        SelfDestruct();
 
+    }
+
+    void SelfDestruct()
+    {
+        Instantiate(particles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

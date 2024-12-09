@@ -8,6 +8,9 @@ public class Shooter : MonoBehaviour
     public Transform shootPoint;
     public AudioClip shootSound;
 
+    public float coolDown = 0.5f;
+
+    private float lastShotTime;
     private AudioSource audioSource;
     private Camera cam;
 
@@ -20,8 +23,10 @@ public class Shooter : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && Time.time - lastShotTime > coolDown)
         {
+            lastShotTime = Time.time;
+            
             audioSource.PlayOneShot(shootSound);
             var mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
